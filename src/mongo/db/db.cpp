@@ -771,7 +771,7 @@ static void buildOptionsDescriptions(po::options_description *pVisible,
     ("noprealloc", "disable data file preallocation - will often hurt performance")
     ("noscripting", "disable scripting engine")
     ("notablescan", "do not allow table scans")
-    ("nssize", po::value<int>()->default_value(16), ".ns file size (in MB) for new databases")
+    ("nssize", po::value<int>()->default_value(64), ".ns file size (in kB) for new databases")
     ("profile",po::value<int>(), "0=off 1=slow, 2=all")
     ("quota", "limits each database to a certain number of files (8 default)")
     ("quotaFiles", po::value<int>(), "number of files allowed per db, requires --quota")
@@ -793,7 +793,7 @@ static void buildOptionsDescriptions(po::options_description *pVisible,
 #endif
 
     replication_options.add_options()
-    ("oplogSize", po::value<int>(), "size to use (in MB) for replication op log. default is 5% of disk space (i.e. large is good)")
+    ("oplogSize", po::value<int>()->default_value(64), "size to use (in kB) for replication op log.")
     ;
 
     ms_options.add_options()
@@ -1063,11 +1063,11 @@ static void processCommandLineOptions(const std::vector<std::string>& argv) {
         }
         if( params.count("nssize") ) {
             int x = params["nssize"].as<int>();
-            if (x <= 0 || x > (0x7fffffff/1024/1024)) {
+            if (x <= 0 || x > (0x7fffffff/1024)) {
                 out() << "bad --nssize arg" << endl;
                 dbexit( EXIT_BADOPTIONS );
             }
-            lenForNewNsFiles = x * 1024 * 1024;
+            lenForNewNsFiles = x * 1024;
             verify(lenForNewNsFiles > 0);
         }
         if (params.count("oplogSize")) {
@@ -1077,11 +1077,11 @@ static void processCommandLineOptions(const std::vector<std::string>& argv) {
                 dbexit( EXIT_BADOPTIONS );
             }
             // note a small size such as x==1 is ok for an arbiter.
-            if( x > 1000 && sizeof(void*) == 4 ) {
-                out() << "--oplogSize of " << x << "MB is too big for 32 bit version. Use 64 bit build instead." << endl;
+            if( x > 1024000 && sizeof(void*) == 4 ) {
+                out() << "--oplogSize of " << x << "kB is too big for 32 bit version. Use 64 bit build instead." << endl;
                 dbexit( EXIT_BADOPTIONS );
             }
-            cmdLine.oplogSize = x * 1024 * 1024;
+            cmdLine.oplogSize = x * 1024;
             verify(cmdLine.oplogSize > 0);
         }
         if (params.count("cacheSize")) {

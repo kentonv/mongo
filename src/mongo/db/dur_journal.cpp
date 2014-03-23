@@ -55,14 +55,7 @@ namespace mongo {
         // work.  (and should as-is)
         // --smallfiles makes the limit small.
 
-#if defined(_DEBUG)
         unsigned long long DataLimitPerJournalFile = 128 * 1024 * 1024;
-#elif defined(__APPLE__)
-        // assuming a developer box if OS X
-        unsigned long long DataLimitPerJournalFile = 256 * 1024 * 1024;
-#else
-        unsigned long long DataLimitPerJournalFile = (sizeof(void*)==4) ? 256 * 1024 * 1024 : 1 * 1024 * 1024 * 1024;
-#endif
 
         BOOST_STATIC_ASSERT( sizeof(Checksum) == 16 );
         BOOST_STATIC_ASSERT( sizeof(JHeader) == 8192 );

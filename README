@@ -1,3 +1,30 @@
+NiscuDB README
+
+This is a fork of MongoDB 2.4.9 with some very "small" adjustments:
+* --smallfiles is now on by default and causes the deafult database file to
+  have a size of 256k.
+* --nssize is measured in KiB rather than MiB, and defaults to 64k.
+* --oplogsize is measured in KiB rather than MiB, and defaults to 64k.
+* Preallocation is disabled by default.
+
+As you can tell, these adjustments are designed to make the database disk
+footprint *small*.  While MongoDB was designed to be humongous (hence the
+name), its proliferation has lead to use cases where you really want something
+miniscule (hence the new name).  For example, a Sandstorm.io app instance may
+store a single document, but might be written using Meteor and therefore want
+to use MongoDB.  The default many-megabyte database size is completely
+inappropriate here and will waste the user's quota.  Niscu works better.
+
+Obviously, Niscu will destroy performance for large databases.  But for small
+ones, it hardly matters.
+
+This code was forked from 2.4.9 because that's the version that is currently
+bundled with Meteor, and I wanted to minimize chances of compatibility issues.
+
+======================================================================
+Original MongoDB README follows
+======================================================================
+
 MongoDB README
 
 Welcome to MongoDB!

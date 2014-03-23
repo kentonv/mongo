@@ -188,9 +188,9 @@ namespace mongo {
     // todo move to cmdline.cpp?
     inline CmdLine::CmdLine() :
         port(DefaultDBPort), rest(false), jsonp(false), indexBuildRetry(true), quiet(false),
-        noTableScan(false), prealloc(true), preallocj(true), smallfiles(sizeof(int*) == 4),
+        noTableScan(false), prealloc(false), preallocj(false), smallfiles(true),
         configsvr(false), quota(false), quotaFiles(8), cpu(false),
-        durOptions(0), objcheck(true), oplogSize(0), defaultProfile(0),
+        durOptions(0), objcheck(true), oplogSize(64*1024), defaultProfile(0),
         slowMS(100), defaultLocalThresholdMillis(15), pretouch(0), moveParanoia( false ),
         syncdelay(60), noUnixSocket(false), doFork(0), socket("/tmp"), maxConns(DEFAULT_MAX_CONN),
         logAppend(false), logWithSyslog(false)

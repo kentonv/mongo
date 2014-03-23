@@ -263,7 +263,10 @@ namespace mongo {
         checkConfigNS(ns);
 
         long long size = Extent::initialSize(128);
-        {
+        // Hack by kenton@sandstorm.io:  I don't know where this "size" option comes from,
+        // but apparently it is 16MB for the "local" DB.  Ignore the option to allow for
+        // smaller DBs.
+        if (false) {
             BSONElement e = options.getField("size");
             if ( e.isNumber() ) {
                 size = e.numberLong();
@@ -417,13 +420,12 @@ namespace mongo {
 
     int MongoDataFile::defaultSize( const char *filename ) const {
         int size;
-        if ( fileNo <= 4 )
-            size = (64*1024*1024) << fileNo;
+        if ( fileNo == 0 )
+            size = 256 * 1024;
+        else if ( fileNo <= 5 )
+            size = (1024*1024) << (fileNo - 1);
         else
-            size = 0x7ff00000;
-        if ( cmdLine.smallfiles ) {
-            size = size >> 2;
-        }
+            size = 167772160;
         return size;
     }
 

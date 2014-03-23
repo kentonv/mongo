@@ -95,7 +95,7 @@ namespace mongo {
             MONGO_ASSERT_ON_EXCEPTION_WITH_MSG( boost::filesystem::create_directory( dir ), "create dir for db " );
     }
 
-    unsigned lenForNewNsFiles = 16 * 1024 * 1024;
+    unsigned lenForNewNsFiles = 64 * 1024;
 
 #if defined(_DEBUG)
     void NamespaceDetails::dump(const Namespace& k) {
@@ -145,16 +145,16 @@ namespace mongo {
         if( boost::filesystem::exists(nsPath) ) {
             if( f.open(pathString, true) ) {
                 len = f.length();
-                if ( len % (1024*1024) != 0 ) {
+                if ( len % (1024) != 0 ) {
                     log() << "bad .ns file: " << pathString << endl;
-                    uassert( 10079 ,  "bad .ns file length, cannot open database", len % (1024*1024) == 0 );
+                    uassert( 10079 ,  "bad .ns file length, cannot open database", len % (1024) == 0 );
                 }
                 p = f.getView();
             }
         }
         else {
             // use lenForNewNsFiles, we are making a new database
-            massert( 10343, "bad lenForNewNsFiles", lenForNewNsFiles >= 1024*1024 );
+            massert( 10343, "bad lenForNewNsFiles", lenForNewNsFiles >= 1024 );
             maybeMkdir();
             unsigned long long l = lenForNewNsFiles;
             if( f.create(pathString, l, true) ) {
