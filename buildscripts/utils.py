@@ -39,12 +39,7 @@ def getGitBranch():
     if not os.path.exists( ".git" ):
         return None
 
-    version = open( ".git/HEAD" ,'r' ).read().strip()
-    if not version.startswith( "ref: " ):
-        return version
-    version = version.split( "/" )
-    version = version[len(version)-1]
-    return version
+    return execsys( "git rev-parse --abbrev-ref HEAD" )[0].strip()
 
 def getGitBranchString( prefix="" , postfix="" ):
     t = re.compile( '[/\\\]' ).split( os.getcwd() )
@@ -66,14 +61,7 @@ def getGitVersion():
     if not os.path.exists( ".git" ):
         return "nogitversion"
 
-    version = open( ".git/HEAD" ,'r' ).read().strip()
-    if not version.startswith( "ref: " ):
-        return version
-    version = version[5:]
-    f = ".git/" + version
-    if not os.path.exists( f ):
-        return version
-    return open( f , 'r' ).read().strip()
+    return execsys( "git rev-parse HEAD" )[0].strip()
 
 def execsys( args ):
     import subprocess
